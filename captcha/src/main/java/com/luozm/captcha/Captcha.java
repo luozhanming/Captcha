@@ -13,7 +13,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 /**
- * Created by cdc4512 on 2018/1/17.
+ * Created by luozhanming on 2018/1/17.
  */
 
 public class Captcha extends LinearLayout {
@@ -70,12 +70,13 @@ public class Captcha extends LinearLayout {
 
             @Override
             public void onFailed() {
+                reset();
                 if (mListener != null) {
                     mListener.onFailed();
                 }
-                accessSuccess.setVisibility(GONE);
-                accessFailed.setVisibility(VISIBLE);
-                accessFailedText.setText(getResources().getString(R.string.vertify_failed));
+//                accessSuccess.setVisibility(GONE);
+//                accessFailed.setVisibility(VISIBLE);
+//                accessFailedText.setText(getResources().getString(R.string.vertify_failed));
             }
         });
         seekbar = (TextSeekbar) parentView.findViewById(R.id.seekbar);

@@ -14,7 +14,7 @@ import java.util.Random;
 
 
 /**
- * Created by cdc4512 on 2018/1/17.
+ * Created by luozhanming on 2018/1/17.
  */
 
 class PictureVertifyView extends AppCompatImageView {
