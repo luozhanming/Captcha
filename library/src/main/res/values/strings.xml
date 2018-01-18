@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">library</string>
+    <string name="vertify_access">验证通过,耗时%d毫秒</string>
+    <string name="vertify_failed">验证失败</string>
+</resources>
