@@ -21,13 +21,15 @@ android {
     }
 }
 
+
+
 ext {
     bintrayRepo = 'androidlibrary'
     bintrayName = 'Captcha'//在bintray网站中项目中填写的名称
 
-    publishedGroupId = 'com.luozm.mvplibrary'//一般为包名
-    libraryName = 'mvplibrary'//library名字需要和本地的lib module一致
-    artifact = 'mvplibrary'//同上
+    publishedGroupId = 'com.luozm.captcha'//一般为包名
+    libraryName = 'captcha'//library名字需要和本地的lib module一致
+    artifact = 'captcha'//同上
 
     libraryDescription = 'An Android captcha widget.'//项目描述
     libraryVersion = '1.0.0'//项目版本号,只需要在每次更新的时候填写
@@ -151,4 +153,5 @@ artifacts {
     archives javadocJar
     archives sourcesJar
 }
+
 

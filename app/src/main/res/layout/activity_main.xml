@@ -6,7 +6,7 @@
     android:orientation="vertical"
     tools:context="com.example.cdc4512.vertifydemo.MainActivity">
 
-    <com.example.library.Captcha
+    <com.luozm.captcha.Captcha
         android:id="@+id/captCha"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>

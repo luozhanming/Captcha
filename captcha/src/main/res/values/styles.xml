@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="MySeekbarSytle" parent="Base.Widget.AppCompat.SeekBar">
+        <item name="android:thumb">@drawable/thumb</item>
+        <item name="android:progressDrawable">@drawable/po_seekbar</item>
+    </style>
+</resources>
