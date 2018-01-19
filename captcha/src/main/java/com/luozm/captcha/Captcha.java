@@ -20,8 +20,8 @@ public class Captcha extends LinearLayout {
 
     private PictureVertifyView vertifyView;
     private TextSeekbar seekbar;
-    private View accessSuccess,accessFailed;
-    private TextView accessText,accessFailedText;
+    private View accessSuccess, accessFailed;
+    private TextView accessText, accessFailedText;
 
     private int drawableId;
 
@@ -52,6 +52,8 @@ public class Captcha extends LinearLayout {
 
     }
 
+    private int oldsign;
+    private boolean isResponse;
 
     private void init() {
         View parentView = LayoutInflater.from(getContext()).inflate(R.layout.container, this, true);
@@ -65,35 +67,58 @@ public class Captcha extends LinearLayout {
                 }
                 accessSuccess.setVisibility(VISIBLE);
                 accessFailed.setVisibility(GONE);
-                accessText.setText(String.format(getResources().getString(R.string.vertify_access),time));
+                accessText.setText(String.format(getResources().getString(R.string.vertify_access), time));
             }
 
             @Override
             public void onFailed() {
                 reset();
+                accessFailed.setVisibility(VISIBLE);
+                accessSuccess.setVisibility(GONE);
+                accessFailedText.setText(getResources().getString(R.string.vertify_failed));
                 if (mListener != null) {
                     mListener.onFailed();
                 }
-//                accessSuccess.setVisibility(GONE);
-//                accessFailed.setVisibility(VISIBLE);
-//                accessFailedText.setText(getResources().getString(R.string.vertify_failed));
             }
         });
         seekbar = (TextSeekbar) parentView.findViewById(R.id.seekbar);
         seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                vertifyView.move(progress);
+                if (Math.abs(progress - oldsign) > 5) {
+                    seekBar.setProgress(oldsign);
+                    isResponse = false;
+                    return;
+                }
+                if(isResponse){
+                    oldsign = progress;
+                    vertifyView.move(progress);
+                }
             }
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
-                vertifyView.down(seekBar.getProgress());
+                if (Math.abs(seekBar.getProgress() - oldsign) > 5) {
+                    isResponse = false;
+                } else {
+                    isResponse=true;
+                    vertifyView.down(0);
+                    oldsign = seekBar.getProgress();
+                    accessFailed.setVisibility(GONE);
+                }
             }
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                vertifyView.loose();
+                if (Math.abs(seekBar.getProgress() - oldsign) > 5) {
+                    isResponse = false;
+                } else {
+                    if(isResponse){
+                        vertifyView.loose();
+                        oldsign=0;
+                        isResponse = false;
+                    }
+                }
             }
         });
         accessSuccess = parentView.findViewById(R.id.accessRight);
@@ -102,15 +127,18 @@ public class Captcha extends LinearLayout {
         accessFailedText = (TextView) parentView.findViewById(R.id.accessFailedText);
     }
 
+
     public void setCaptchaListener(CaptchaListener listener) {
         this.mListener = listener;
     }
 
-    public void reset(){
+    public void reset() {
         vertifyView.reset();
-        accessFailed.setVisibility(GONE);
-        accessSuccess.setVisibility(GONE);
+        oldsign = 0;
+        seekbar.setProgress(0);
     }
+
+
 
 
 }

@@ -9,6 +9,7 @@ import android.graphics.Path;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
+import android.view.View;
 
 import java.util.Random;
 
@@ -74,7 +75,7 @@ class PictureVertifyView extends AppCompatImageView {
         if (mState != STATE_ACCESS) {
             canvas.drawPath(blockPath, shadowPaint);
         }
-        if (mState == STATE_DOWN || mState == STATE_MOVE || mState == STATE_UNACCESS) {
+        if (mState == STATE_MOVE || mState == STATE_IDEL) {
             canvas.drawBitmap(verfityBlock, currentPosition, info.top, bitmapPaint);
         }
 
@@ -199,8 +200,9 @@ class PictureVertifyView extends AppCompatImageView {
         Random random = new Random();
         int edge = Utils.dp2px(getContext(), 50);
         int left = random.nextInt(width - edge);
-        if (left < 0) {
-            left = 0;
+        //Avoid robot frequently and quickly click the start point to access the captcha.
+        if (left < edge) {
+            left = edge;
         }
         int top = random.nextInt(height - edge);
         if (top < 0) {
@@ -210,7 +212,7 @@ class PictureVertifyView extends AppCompatImageView {
     }
 
 
-    public class VertifyInfo {
+    class VertifyInfo {
 
         int left;
         int top;
