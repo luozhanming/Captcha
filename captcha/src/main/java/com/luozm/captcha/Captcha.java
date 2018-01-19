@@ -3,6 +3,7 @@ package com.luozm.captcha;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.support.annotation.AttrRes;
+import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
@@ -24,15 +25,24 @@ public class Captcha extends LinearLayout {
     private TextView accessText, accessFailedText;
 
     private int drawableId;
+    private int progressDrawableId;
+    private int thumbDrawableId;
 
+
+    //处理滑动条逻辑
+    private int oldsign;
+    private boolean isResponse;
+
+
+    private CaptchaListener mListener;
 
     public interface CaptchaListener {
+
         void onAccess(long time);
 
         void onFailed();
-    }
 
-    private CaptchaListener mListener;
+    }
 
 
     public Captcha(@NonNull Context context) {
@@ -47,13 +57,12 @@ public class Captcha extends LinearLayout {
         super(context, attrs, defStyleAttr);
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.Captcha);
         drawableId = typedArray.getResourceId(R.styleable.Captcha_src, R.drawable.cat);
+        progressDrawableId = typedArray.getResourceId(R.styleable.Captcha_progressDrawable, R.drawable.po_seekbar);
+        thumbDrawableId = typedArray.getResourceId(R.styleable.Captcha_thumbDrawable, R.drawable.thumb);
         typedArray.recycle();
         init();
-
     }
 
-    private int oldsign;
-    private boolean isResponse;
 
     private void init() {
         View parentView = LayoutInflater.from(getContext()).inflate(R.layout.container, this, true);
@@ -82,6 +91,7 @@ public class Captcha extends LinearLayout {
             }
         });
         seekbar = (TextSeekbar) parentView.findViewById(R.id.seekbar);
+        setSeekBarStyle(progressDrawableId, thumbDrawableId);
         seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -90,7 +100,7 @@ public class Captcha extends LinearLayout {
                     isResponse = false;
                     return;
                 }
-                if(isResponse){
+                if (isResponse) {
                     oldsign = progress;
                     vertifyView.move(progress);
                 }
@@ -101,7 +111,7 @@ public class Captcha extends LinearLayout {
                 if (Math.abs(seekBar.getProgress() - oldsign) > 5) {
                     isResponse = false;
                 } else {
-                    isResponse=true;
+                    isResponse = true;
                     vertifyView.down(0);
                     oldsign = seekBar.getProgress();
                     accessFailed.setVisibility(GONE);
@@ -113,9 +123,9 @@ public class Captcha extends LinearLayout {
                 if (Math.abs(seekBar.getProgress() - oldsign) > 5) {
                     isResponse = false;
                 } else {
-                    if(isResponse){
+                    if (isResponse) {
                         vertifyView.loose();
-                        oldsign=0;
+                        oldsign = 0;
                         isResponse = false;
                     }
                 }
@@ -132,13 +142,33 @@ public class Captcha extends LinearLayout {
         this.mListener = listener;
     }
 
+    public void setCaptchaStrategy(CaptchaStrategy strategy) {
+        if (strategy != null) {
+            vertifyView.setCaptchaStrategy(strategy);
+        }
+    }
+
+    public void setSeekBarStyle(@DrawableRes int progressDrawable, @DrawableRes int thumbDrawable) {
+        seekbar.setProgressDrawable(getResources().getDrawable(progressDrawable));
+        seekbar.setThumb(getResources().getDrawable(thumbDrawable));
+        seekbar.setThumbOffset(0);
+    }
+
+    /**
+     * 设置滑块图片大小，单位dp
+     */
+    public void setBlockSize(int blockSize) {
+        vertifyView.setBlockSize(blockSize);
+    }
+
+    /**
+     * 复位
+     */
     public void reset() {
         vertifyView.reset();
         oldsign = 0;
         seekbar.setProgress(0);
     }
-
-
 
 
 }

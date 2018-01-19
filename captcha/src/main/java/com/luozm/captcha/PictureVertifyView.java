@@ -3,15 +3,12 @@ package com.luozm.captcha;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
 import android.view.View;
-
-import java.util.Random;
 
 
 /**
@@ -31,16 +28,19 @@ class PictureVertifyView extends AppCompatImageView {
 
 
     private int mState = STATE_IDEL;
-    private VertifyInfo info;
+    private PositionInfo info;
     private Bitmap verfityBlock;
-    private Path blockPath;
+    private Path blockShape;
     private Paint bitmapPaint;
     private Paint shadowPaint;
     private int currentPosition;
     private long startTouchTime;
     private long looseTime;
+    private int blockSize = 50;
 
     private Captcha.CaptchaListener listener;
+
+    private CaptchaStrategy mStrategy;
 
 
     public PictureVertifyView(Context context) {
@@ -49,14 +49,15 @@ class PictureVertifyView extends AppCompatImageView {
 
     public PictureVertifyView(Context context, @Nullable AttributeSet attrs) {
         this(context, attrs, 0);
+
     }
 
     public PictureVertifyView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        shadowPaint = new Paint();
-        shadowPaint.setColor(Color.parseColor("#000000"));
-        shadowPaint.setAlpha(164);
-        bitmapPaint = new Paint();
+        mStrategy = new DefaultCaptchaStrategy(context);
+        shadowPaint = mStrategy.getBlockShadowPaint();
+        bitmapPaint = mStrategy.getBlockBitmapPaint();
+        setLayerType(View.LAYER_TYPE_SOFTWARE,bitmapPaint);
     }
 
 
@@ -64,16 +65,17 @@ class PictureVertifyView extends AppCompatImageView {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         if (info == null) {
-            info = generateVerfificationData();
+            info = mStrategy.getBlockPostionInfo(getWidth(), getHeight());
         }
-        if (blockPath == null) {
-            blockPath = generateBlockPath();
+        if (blockShape == null) {
+            blockShape = mStrategy.getBlockShape(blockSize);
+            blockShape.offset(info.left, info.top);
         }
         if (verfityBlock == null) {
             verfityBlock = createBlockBitmap();
         }
         if (mState != STATE_ACCESS) {
-            canvas.drawPath(blockPath, shadowPaint);
+            canvas.drawPath(blockShape, shadowPaint);
         }
         if (mState == STATE_MOVE || mState == STATE_IDEL) {
             canvas.drawBitmap(verfityBlock, currentPosition, info.top, bitmapPaint);
@@ -81,24 +83,75 @@ class PictureVertifyView extends AppCompatImageView {
 
     }
 
-    public void down(int progress) {
+    void down(int progress) {
         startTouchTime = System.currentTimeMillis();
         mState = STATE_DOWN;
         currentPosition = (int) (progress / 100f * (getWidth() - Utils.dp2px(getContext(), 50)));
         invalidate();
     }
 
-    public void move(int progress) {
+    void move(int progress) {
         mState = STATE_MOVE;
         currentPosition = (int) (progress / 100f * (getWidth() - Utils.dp2px(getContext(), 50)));
         invalidate();
     }
 
-    public void loose() {
+    void loose() {
         mState = STATE_LOOSEN;
         looseTime = System.currentTimeMillis();
         checkAccess();
         invalidate();
+    }
+
+
+    void reset() {
+        mState = STATE_IDEL;
+        verfityBlock.recycle();
+        verfityBlock = null;
+        info = null;
+        blockShape = null;
+        invalidate();
+    }
+
+    void unAccess() {
+        mState = STATE_UNACCESS;
+        invalidate();
+    }
+
+    void access() {
+        mState = STATE_ACCESS;
+        invalidate();
+    }
+
+    void setAccessListener(Captcha.CaptchaListener listener) {
+        this.listener = listener;
+    }
+
+
+    void setCaptchaStrategy(CaptchaStrategy strategy) {
+        this.mStrategy = strategy;
+    }
+
+    void setBlockSize(int size){
+        this.blockSize = size;
+    }
+
+    private Bitmap createBlockBitmap() {
+        Bitmap tempBitmap = Bitmap.createBitmap(getWidth(), getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(tempBitmap);
+        getDrawable().setBounds(0, 0, getWidth(), getHeight());
+        canvas.clipPath(blockShape);
+        getDrawable().draw(canvas);
+        mStrategy.decoreateSwipeBlockBitmap(canvas,blockShape);
+        return cropBitmap(tempBitmap);
+    }
+
+    private Bitmap cropBitmap(Bitmap bmp) {
+        Bitmap result = null;
+        int size = Utils.dp2px(getContext(), blockSize);
+        result = Bitmap.createBitmap(bmp, info.left, info.top, size, size);
+        bmp.recycle();
+        return result;
     }
 
     private void checkAccess() {
@@ -116,108 +169,13 @@ class PictureVertifyView extends AppCompatImageView {
         }
     }
 
-    public void reset() {
-        mState = STATE_IDEL;
-        verfityBlock.recycle();
-        verfityBlock = null;
-        info = null;
-        blockPath = null;
-        invalidate();
-    }
 
-    public void unAccess() {
-        mState = STATE_UNACCESS;
-        invalidate();
-    }
-
-    public void access() {
-        mState = STATE_ACCESS;
-        invalidate();
-    }
-
-    public void setAccessListener(Captcha.CaptchaListener listener) {
-        this.listener = listener;
-    }
-
-    private Bitmap createBlockBitmap() {
-        Bitmap tempBitmap = Bitmap.createBitmap(getWidth(), getHeight(), Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(tempBitmap);
-        int gap = Utils.dp2px(getContext(), 10);
-        Path path = new Path();
-        path.moveTo(0, gap);
-        path.rLineTo(Utils.dp2px(getContext(), 20), 0);
-        path.rLineTo(0, -gap);
-        path.rLineTo(gap, 0);
-        path.rLineTo(0, gap);
-        path.rLineTo(2 * gap, 0);
-        path.rLineTo(0, 4 * gap);
-        path.rLineTo(-5 * gap, 0);
-        path.rLineTo(0, -1.5f * gap);
-        path.rLineTo(gap, 0);
-        path.rLineTo(0, -gap);
-        path.rLineTo(-gap, 0);
-        path.close();
-        getDrawable().setBounds(0, 0, getWidth(), getHeight());
-        canvas.clipPath(blockPath);
-        getDrawable().draw(canvas);
-        return cropBitmap(tempBitmap);
-
-    }
-
-    private Bitmap cropBitmap(Bitmap bmp) {
-        Bitmap result = null;
-        int size = Utils.dp2px(getContext(), 50);
-        result = Bitmap.createBitmap(bmp, info.left, info.top, size, size);
-        bmp.recycle();
-        return result;
-    }
-
-
-    //generate block path
-    private Path generateBlockPath() {
-        int gap = Utils.dp2px(getContext(), 10);
-        Path path = new Path();
-        path.moveTo(info.left, info.top + gap);
-        path.rLineTo(Utils.dp2px(getContext(), 20), 0);
-        path.rLineTo(0, -gap);
-        path.rLineTo(gap, 0);
-        path.rLineTo(0, gap);
-        path.rLineTo(2 * gap, 0);
-        path.rLineTo(0, 4 * gap);
-        path.rLineTo(-5 * gap, 0);
-        path.rLineTo(0, -1.5f * gap);
-        path.rLineTo(gap, 0);
-        path.rLineTo(0, -gap);
-        path.rLineTo(-gap, 0);
-        path.close();
-        return path;
-    }
-
-    //generate block postion
-    private VertifyInfo generateVerfificationData() {
-        int width = getWidth();
-        int height = getHeight();
-        Random random = new Random();
-        int edge = Utils.dp2px(getContext(), 50);
-        int left = random.nextInt(width - edge);
-        //Avoid robot frequently and quickly click the start point to access the captcha.
-        if (left < edge) {
-            left = edge;
-        }
-        int top = random.nextInt(height - edge);
-        if (top < 0) {
-            top = 0;
-        }
-        return new VertifyInfo(left, top);
-    }
-
-
-    class VertifyInfo {
+    public static class PositionInfo {
 
         int left;
         int top;
 
-        public VertifyInfo(int left, int top) {
+        public PositionInfo(int left, int top) {
             this.left = left;
             this.top = top;
         }

@@ -2,5 +2,7 @@
 <resources>
     <declare-styleable name="Captcha">
         <attr name="src" format="reference"/>
+        <attr name="progressDrawable" format="reference"/>
+        <attr name="thumbDrawable" format="reference"/>
     </declare-styleable>
 </resources>
