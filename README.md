@@ -4,8 +4,8 @@ Android滑块拼图验证码控件
 <img src="https://github.com/luozhanming/Captcha/blob/master/GIF_20180120_215046.gif" width="240" height="360" />
 
 ##Feature
-1.简单，实用，只需一两句代码即可使用
-2.采用策略模式为使用者开发可更换拼图样式策略，对拼图样式(拼图形状、视觉效果)进行定制
+1.简单，实用，只需一两句代码即可使用<br>
+2.采用策略模式为使用者开发可更换拼图样式策略，对拼图样式(拼图形状、视觉效果)进行定制<br>
 
 ## Usage
 1.在app的build.gradle添加依赖
