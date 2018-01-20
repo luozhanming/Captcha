@@ -96,7 +96,7 @@ captCha.setCaptchaStrategy(new XXXCaptchaStrategy(context));
 ## License
 ```xml
 Captcha library for Android
-Copyright (c) 2018 Luozhanming (http://ashokvarma.me/).
+Copyright (c) 2018 Luozhanming 
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
