@@ -93,7 +93,7 @@ compile 'com.luozm.captcha:captcha:1.0.4'
 captCha.setCaptchaStrategy(new XXXCaptchaStrategy(context));
 ```
 
-##License
+## License
 ```xml
 Captcha library for Android
 Copyright (c) 2018 Luozhanming (http://ashokvarma.me/).
