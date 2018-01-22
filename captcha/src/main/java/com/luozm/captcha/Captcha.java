@@ -32,6 +32,7 @@ public class Captcha extends LinearLayout {
     //处理滑动条逻辑
     private int oldsign;
     private boolean isResponse;
+    private boolean isDown;
 
 
     private CaptchaListener mListener;
@@ -95,39 +96,33 @@ public class Captcha extends LinearLayout {
         seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if (Math.abs(progress - oldsign) > 5) {
-                    seekBar.setProgress(oldsign);
-                    isResponse = false;
-                    return;
+                if (isDown) {
+                    isDown = false;
+                    if (progress > 10) {
+                        isResponse = false;
+                    } else {
+                        isResponse = true;
+                        accessFailed.setVisibility(GONE);
+                        vertifyView.down(0);
+                    }
                 }
                 if (isResponse) {
-                    oldsign = progress;
                     vertifyView.move(progress);
+                } else {
+                    seekBar.setProgress(0);
+                    isResponse = false;
                 }
             }
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
-                if (Math.abs(seekBar.getProgress() - oldsign) > 5) {
-                    isResponse = false;
-                } else {
-                    isResponse = true;
-                    vertifyView.down(0);
-                    oldsign = seekBar.getProgress();
-                    accessFailed.setVisibility(GONE);
-                }
+                isDown = true;
             }
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                if (Math.abs(seekBar.getProgress() - oldsign) > 5) {
-                    isResponse = false;
-                } else {
-                    if (isResponse) {
-                        vertifyView.loose();
-                        oldsign = 0;
-                        isResponse = false;
-                    }
+                if (isResponse) {
+                    vertifyView.loose();
                 }
             }
         });
