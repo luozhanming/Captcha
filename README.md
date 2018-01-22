@@ -93,6 +93,18 @@ compile 'com.luozm.captcha:captcha:1.0.4'
 captCha.setCaptchaStrategy(new XXXCaptchaStrategy(context));
 ```
 
+5.(可选)自定义滑块条
+   与Seekbar自定义样式一样
+```xml
+<com.luozm.captcha.Captcha
+        android:id="@+id/captCha"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:progressDrawable="@drawable/progress"
+        app:thumbDrawable="@drawable/thumb"
+        app:src="@mipmap/cat"/>
+```
+
 ## License
 ```xml
 Captcha library for Android
