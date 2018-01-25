@@ -105,6 +105,9 @@ captCha.setCaptchaStrategy(new XXXCaptchaStrategy(context));
         app:src="@mipmap/cat"/>
 ```
 
+##博文地址
+http://blog.csdn.net/sdfsdfdfa/article/details/79120665
+
 ## License
 ```xml
 Captcha library for Android
