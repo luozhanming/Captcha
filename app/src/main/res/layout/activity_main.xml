@@ -10,7 +10,9 @@
     <com.luozm.captcha.Captcha
         android:id="@+id/captCha"
         android:layout_width="match_parent"
-        app:mode="mode_bar"
+        app:mode="mode_nonbar"
+        app:src="@mipmap/cat"
+        app:blockSize="150dp"
         app:max_fail_count="5"
         android:layout_height="wrap_content"/>
 

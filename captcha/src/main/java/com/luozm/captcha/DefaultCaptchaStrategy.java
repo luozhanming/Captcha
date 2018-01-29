@@ -21,10 +21,10 @@ public class DefaultCaptchaStrategy extends CaptchaStrategy {
 
     @Override
     public Path getBlockShape(int blockSize) {
-        int gap = Utils.dp2px(getContext(), blockSize/5f);
+        int gap = (int) (blockSize/5f);
         Path path = new Path();
         path.moveTo(0, gap);
-        path.rLineTo(Utils.dp2px(getContext(), blockSize/2.5f), 0);
+        path.rLineTo(blockSize/2.5f, 0);
         path.rLineTo(0, -gap);
         path.rLineTo(gap, 0);
         path.rLineTo(0, gap);
@@ -42,13 +42,23 @@ public class DefaultCaptchaStrategy extends CaptchaStrategy {
     @Override
     public PictureVertifyView.PositionInfo getBlockPostionInfo(int width, int height,int blockSize) {
         Random random = new Random();
-        int edge = Utils.dp2px(getContext(), blockSize);
-        int left = random.nextInt(width - edge);
+        int left = random.nextInt(width - blockSize);
         //Avoid robot frequently and quickly click the start point to access the captcha.
-        if (left < edge) {
-            left = edge;
+        if (left < blockSize) {
+            left = blockSize;
         }
-        int top = random.nextInt(height - edge);
+        int top = random.nextInt(height - blockSize);
+        if (top < 0) {
+            top = 0;
+        }
+        return new PictureVertifyView.PositionInfo(left, top);
+    }
+
+    @Override
+    public PictureVertifyView.PositionInfo getPositionInfoForSwipeBlock(int width, int height, int blockSize) {
+        Random random = new Random();
+        int left = random.nextInt(width - blockSize);
+        int top = random.nextInt(height - blockSize);
         if (top < 0) {
             top = 0;
         }

@@ -36,7 +36,18 @@ public abstract class CaptchaStrategy {
      * @param height picture height
      * @return position info of the block
      */
-    public abstract PictureVertifyView.PositionInfo getBlockPostionInfo(int width, int height,int blockSize);
+    public abstract PictureVertifyView.PositionInfo getBlockPostionInfo(int width, int height, int blockSize);
+
+    /**
+     * 定义滑块图片的位置信息(只有设置为无滑动条模式有用)
+     *
+     * @param width  picture width
+     * @param height picture height
+     * @return position info of the block
+     */
+    public PictureVertifyView.PositionInfo getPositionInfoForSwipeBlock(int width, int height, int blockSize){
+        return getBlockPostionInfo(width,height,blockSize);
+    }
 
     /**
      * 获得缺块阴影的Paint
@@ -51,7 +62,7 @@ public abstract class CaptchaStrategy {
     /**
      * 装饰滑块图片，在绘制图片后执行，即绘制滑块前景
      */
-    public void decoreateSwipeBlockBitmap(Canvas canvas,Path shape) {
+    public void decoreateSwipeBlockBitmap(Canvas canvas, Path shape) {
 
     }
 }

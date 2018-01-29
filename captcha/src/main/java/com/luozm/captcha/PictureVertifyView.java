@@ -47,6 +47,8 @@ class PictureVertifyView extends AppCompatImageView {
 
     private int mMode;
 
+
+
     interface Callback{
         void onSuccess(long time);
         void onFailed();
@@ -79,7 +81,7 @@ class PictureVertifyView extends AppCompatImageView {
             if(mMode==Captcha.MODE_BAR){
                 blockInfo = new PositionInfo(0, shadowInfo.top);
             }else{
-                blockInfo = mStrategy.getBlockPostionInfo(getWidth(),getHeight(),blockSize);
+                blockInfo = mStrategy.getPositionInfoForSwipeBlock(getWidth(), getHeight(), blockSize);
             }
         }
         if (blockShape == null) {
@@ -101,22 +103,21 @@ class PictureVertifyView extends AppCompatImageView {
     void down(int progress) {
         startTouchTime = System.currentTimeMillis();
         mState = STATE_DOWN;
-        blockInfo.left = (int) (progress / 100f * (getWidth() - Utils.dp2px(getContext(), blockSize)));
+        blockInfo.left = (int) (progress / 100f * (getWidth() - blockSize));
         invalidate();
     }
 
     void downByTouch(float x, float y) {
-        int px = Utils.dp2px(getContext(), blockSize);
         mState = STATE_DOWN;
-        blockInfo.left = (int) (x - px / 2f);
-        blockInfo.top = (int) (y - px / 2f);
+        blockInfo.left = (int) (x - blockSize / 2f);
+        blockInfo.top = (int) (y - blockSize / 2f);
         startTouchTime = System.currentTimeMillis();
         invalidate();
     }
 
     void move(int progress) {
         mState = STATE_MOVE;
-        blockInfo.left = (int) (progress / 100f * (getWidth() - Utils.dp2px(getContext(), 50)));
+        blockInfo.left = (int) (progress / 100f * (getWidth() - blockSize));
         invalidate();
     }
 
@@ -165,6 +166,20 @@ class PictureVertifyView extends AppCompatImageView {
 
     void setBlockSize(int size) {
         this.blockSize = size;
+        this.blockShape = null;
+        this.blockInfo = null;
+        this.shadowInfo =null;
+        this.verfityBlock = null;
+        invalidate();
+    }
+
+    public void setBitmap(Bitmap bitmap) {
+        this.blockShape = null;
+        this.blockInfo = null;
+        this.shadowInfo =null;
+        this.verfityBlock = null;
+        setImageBitmap(bitmap);
+        invalidate();
     }
 
     void setMode(@Captcha.Mode int mode) {
@@ -183,8 +198,7 @@ class PictureVertifyView extends AppCompatImageView {
 
     private Bitmap cropBitmap(Bitmap bmp) {
         Bitmap result = null;
-        int size = Utils.dp2px(getContext(), blockSize);
-        result = Bitmap.createBitmap(bmp, shadowInfo.left, shadowInfo.top, size, size);
+        result = Bitmap.createBitmap(bmp, shadowInfo.left, shadowInfo.top, blockSize, blockSize);
         bmp.recycle();
         return result;
     }
@@ -210,8 +224,7 @@ class PictureVertifyView extends AppCompatImageView {
     @Override
     public boolean dispatchTouchEvent(MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_DOWN && mMode == Captcha.MODE_NONBAR) {
-            int px = Utils.dp2px(getContext(), blockSize);
-            if (event.getX() < blockInfo.left || event.getX() > blockInfo.left + px || event.getY() < blockInfo.top || event.getY() > blockInfo.top + px) {
+            if (event.getX() < blockInfo.left || event.getX() > blockInfo.left + blockSize || event.getY() < blockInfo.top || event.getY() > blockInfo.top + blockSize) {
                 return false;
             }
         }

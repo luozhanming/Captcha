@@ -2,6 +2,7 @@ package com.luozm.captcha;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Bitmap;
 import android.support.annotation.AttrRes;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.IntDef;
@@ -34,6 +35,7 @@ public class Captcha extends LinearLayout {
     private int mMode;
     private int maxFailedCount;
     private int failCount;
+    private int blockSize;
 
     //处理滑动条逻辑
     private boolean isResponse;
@@ -79,6 +81,7 @@ public class Captcha extends LinearLayout {
         thumbDrawableId = typedArray.getResourceId(R.styleable.Captcha_thumbDrawable, R.drawable.thumb);
         mMode = typedArray.getInteger(R.styleable.Captcha_mode, MODE_BAR);
         maxFailedCount = typedArray.getInteger(R.styleable.Captcha_max_fail_count, 3);
+        blockSize = typedArray.getDimensionPixelSize(R.styleable.Captcha_blockSize,Utils.dp2px(getContext(),50));
         typedArray.recycle();
         init();
     }
@@ -94,6 +97,7 @@ public class Captcha extends LinearLayout {
         accessFailedText = (TextView) parentView.findViewById(R.id.accessFailedText);
         setMode(mMode);
         vertifyView.setImageResource(drawableId);
+        setBlockSize(blockSize);
         vertifyView.callback(new PictureVertifyView.Callback() {
             @Override
             public void onSuccess(long time) {
@@ -171,7 +175,7 @@ public class Captcha extends LinearLayout {
     }
 
     /**
-     * 设置滑块图片大小，单位dp
+     * 设置滑块图片大小，单位px
      */
     public void setBlockSize(int blockSize) {
         vertifyView.setBlockSize(blockSize);
@@ -200,6 +204,10 @@ public class Captcha extends LinearLayout {
 
     public int getMaxFailedCount(){
         return this.maxFailedCount;
+    }
+
+    public void setBitmap(Bitmap bitmap){
+        vertifyView.setBitmap(bitmap);
     }
 
 

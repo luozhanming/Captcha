@@ -9,5 +9,6 @@
             <enum name="mode_nonbar" value="2"/>
         </attr>
         <attr name="max_fail_count" format="integer"/>
+        <attr name="blockSize" format="dimension"/>
     </declare-styleable>
 </resources>
