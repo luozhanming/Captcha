@@ -10,7 +10,7 @@ Android滑块拼图验证码控件
 ## Usage
 1.在app的build.gradle添加依赖
 ```Groovy
-compile 'com.luozm.captcha:captcha:1.0.4'
+compile 'com.luozm.captcha:captcha:1.0.5'
 ```
 2.将Captcha添加至布局
 ```xml
@@ -104,6 +104,10 @@ captCha.setCaptchaStrategy(new XXXCaptchaStrategy(context));
         app:thumbDrawable="@drawable/thumb"
         app:src="@mipmap/cat"/>
 ```
+
+## 博文地址
+
+http://blog.csdn.net/sdfsdfdfa/article/details/79120665
 
 ## License
 ```xml
