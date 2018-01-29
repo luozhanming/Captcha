@@ -12,8 +12,15 @@
         android:layout_width="match_parent"
         app:mode="mode_nonbar"
         app:src="@mipmap/cat"
-        app:blockSize="150dp"
+        app:blockSize="50dp"
         app:max_fail_count="5"
         android:layout_height="wrap_content"/>
+
+    <Button
+        android:layout_marginTop="10dp"
+        android:id="@+id/btn_mode"
+        android:layout_width="match_parent"
+        android:text="无滑动条模式"
+        android:layout_height="wrap_content" />
 
 </LinearLayout>

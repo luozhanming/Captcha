@@ -179,11 +179,15 @@ class PictureVertifyView extends AppCompatImageView {
         this.shadowInfo =null;
         this.verfityBlock = null;
         setImageBitmap(bitmap);
-        invalidate();
     }
 
     void setMode(@Captcha.Mode int mode) {
         this.mMode = mode;
+        this.blockShape = null;
+        this.blockInfo = null;
+        this.shadowInfo =null;
+        this.verfityBlock = null;
+        invalidate();
     }
 
     private Bitmap createBlockBitmap() {
