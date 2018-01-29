@@ -4,5 +4,10 @@
         <attr name="src" format="reference"/>
         <attr name="progressDrawable" format="reference"/>
         <attr name="thumbDrawable" format="reference"/>
+        <attr name="mode" format="enum">
+            <enum name="mode_bar" value="1"/>
+            <enum name="mode_nonbar" value="2"/>
+        </attr>
+        <attr name="max_fail_count" format="integer"/>
     </declare-styleable>
 </resources>

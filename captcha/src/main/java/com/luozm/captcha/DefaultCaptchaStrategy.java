@@ -40,9 +40,9 @@ public class DefaultCaptchaStrategy extends CaptchaStrategy {
     }
 
     @Override
-    public PictureVertifyView.PositionInfo getBlockPostionInfo(int width, int height) {
+    public PictureVertifyView.PositionInfo getBlockPostionInfo(int width, int height,int blockSize) {
         Random random = new Random();
-        int edge = Utils.dp2px(getContext(), 50);
+        int edge = Utils.dp2px(getContext(), blockSize);
         int left = random.nextInt(width - edge);
         //Avoid robot frequently and quickly click the start point to access the captcha.
         if (left < edge) {

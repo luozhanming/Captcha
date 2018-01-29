@@ -5,9 +5,11 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.View;
 
 
@@ -24,23 +26,31 @@ class PictureVertifyView extends AppCompatImageView {
     private static final int STATE_ACCESS = 5;
     private static final int STATE_UNACCESS = 6;
 
+
     private static final int TOLERANCE = 10;
 
 
     private int mState = STATE_IDEL;
-    private PositionInfo info;
+    private PositionInfo shadowInfo;
+    private PositionInfo blockInfo;
     private Bitmap verfityBlock;
     private Path blockShape;
     private Paint bitmapPaint;
     private Paint shadowPaint;
-    private int currentPosition;
     private long startTouchTime;
     private long looseTime;
     private int blockSize = 50;
 
-    private Captcha.CaptchaListener listener;
+    private Callback callback;
 
     private CaptchaStrategy mStrategy;
+
+    private int mMode;
+
+    interface Callback{
+        void onSuccess(long time);
+        void onFailed();
+    }
 
 
     public PictureVertifyView(Context context) {
@@ -57,19 +67,24 @@ class PictureVertifyView extends AppCompatImageView {
         mStrategy = new DefaultCaptchaStrategy(context);
         shadowPaint = mStrategy.getBlockShadowPaint();
         bitmapPaint = mStrategy.getBlockBitmapPaint();
-        setLayerType(View.LAYER_TYPE_SOFTWARE,bitmapPaint);
+        setLayerType(View.LAYER_TYPE_SOFTWARE, bitmapPaint);
     }
 
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        if (info == null) {
-            info = mStrategy.getBlockPostionInfo(getWidth(), getHeight());
+        if (shadowInfo == null) {
+            shadowInfo = mStrategy.getBlockPostionInfo(getWidth(), getHeight(), blockSize);
+            if(mMode==Captcha.MODE_BAR){
+                blockInfo = new PositionInfo(0, shadowInfo.top);
+            }else{
+                blockInfo = mStrategy.getBlockPostionInfo(getWidth(),getHeight(),blockSize);
+            }
         }
         if (blockShape == null) {
             blockShape = mStrategy.getBlockShape(blockSize);
-            blockShape.offset(info.left, info.top);
+            blockShape.offset(shadowInfo.left, shadowInfo.top);
         }
         if (verfityBlock == null) {
             verfityBlock = createBlockBitmap();
@@ -77,8 +92,8 @@ class PictureVertifyView extends AppCompatImageView {
         if (mState != STATE_ACCESS) {
             canvas.drawPath(blockShape, shadowPaint);
         }
-        if (mState == STATE_MOVE || mState == STATE_IDEL) {
-            canvas.drawBitmap(verfityBlock, currentPosition, info.top, bitmapPaint);
+        if (mState == STATE_MOVE || mState == STATE_IDEL || mState == STATE_DOWN) {
+            canvas.drawBitmap(verfityBlock, blockInfo.left, blockInfo.top, bitmapPaint);
         }
 
     }
@@ -86,13 +101,29 @@ class PictureVertifyView extends AppCompatImageView {
     void down(int progress) {
         startTouchTime = System.currentTimeMillis();
         mState = STATE_DOWN;
-        currentPosition = (int) (progress / 100f * (getWidth() - Utils.dp2px(getContext(), 50)));
+        blockInfo.left = (int) (progress / 100f * (getWidth() - Utils.dp2px(getContext(), blockSize)));
+        invalidate();
+    }
+
+    void downByTouch(float x, float y) {
+        int px = Utils.dp2px(getContext(), blockSize);
+        mState = STATE_DOWN;
+        blockInfo.left = (int) (x - px / 2f);
+        blockInfo.top = (int) (y - px / 2f);
+        startTouchTime = System.currentTimeMillis();
         invalidate();
     }
 
     void move(int progress) {
         mState = STATE_MOVE;
-        currentPosition = (int) (progress / 100f * (getWidth() - Utils.dp2px(getContext(), 50)));
+        blockInfo.left = (int) (progress / 100f * (getWidth() - Utils.dp2px(getContext(), 50)));
+        invalidate();
+    }
+
+    void moveByTouch(float offsetX, float offsetY) {
+        mState = STATE_MOVE;
+        blockInfo.left += offsetX;
+        blockInfo.top += offsetY;
         invalidate();
     }
 
@@ -108,7 +139,7 @@ class PictureVertifyView extends AppCompatImageView {
         mState = STATE_IDEL;
         verfityBlock.recycle();
         verfityBlock = null;
-        info = null;
+        shadowInfo = null;
         blockShape = null;
         invalidate();
     }
@@ -123,8 +154,8 @@ class PictureVertifyView extends AppCompatImageView {
         invalidate();
     }
 
-    void setAccessListener(Captcha.CaptchaListener listener) {
-        this.listener = listener;
+    void callback(Callback callback) {
+        this.callback = callback;
     }
 
 
@@ -132,8 +163,12 @@ class PictureVertifyView extends AppCompatImageView {
         this.mStrategy = strategy;
     }
 
-    void setBlockSize(int size){
+    void setBlockSize(int size) {
         this.blockSize = size;
+    }
+
+    void setMode(@Captcha.Mode int mode) {
+        this.mMode = mode;
     }
 
     private Bitmap createBlockBitmap() {
@@ -142,33 +177,72 @@ class PictureVertifyView extends AppCompatImageView {
         getDrawable().setBounds(0, 0, getWidth(), getHeight());
         canvas.clipPath(blockShape);
         getDrawable().draw(canvas);
-        mStrategy.decoreateSwipeBlockBitmap(canvas,blockShape);
+        mStrategy.decoreateSwipeBlockBitmap(canvas, blockShape);
         return cropBitmap(tempBitmap);
     }
 
     private Bitmap cropBitmap(Bitmap bmp) {
         Bitmap result = null;
         int size = Utils.dp2px(getContext(), blockSize);
-        result = Bitmap.createBitmap(bmp, info.left, info.top, size, size);
+        result = Bitmap.createBitmap(bmp, shadowInfo.left, shadowInfo.top, size, size);
         bmp.recycle();
         return result;
     }
 
     private void checkAccess() {
-        if (Math.abs(currentPosition - info.left) < TOLERANCE) {
+        if (Math.abs(blockInfo.left - shadowInfo.left) < TOLERANCE && Math.abs(blockInfo.top - shadowInfo.top) < TOLERANCE) {
             access();
-            if (listener != null) {
+            if (callback != null) {
                 long deltaTime = looseTime - startTouchTime;
-                listener.onAccess(deltaTime);
+                callback.onSuccess(deltaTime);
             }
         } else {
             unAccess();
-            if (listener != null) {
-                listener.onFailed();
+            if (callback != null) {
+                callback.onFailed();
             }
         }
     }
 
+    private float tempX, tempY, downX, downY;
+
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_DOWN && mMode == Captcha.MODE_NONBAR) {
+            int px = Utils.dp2px(getContext(), blockSize);
+            if (event.getX() < blockInfo.left || event.getX() > blockInfo.left + px || event.getY() < blockInfo.top || event.getY() > blockInfo.top + px) {
+                return false;
+            }
+        }
+        return super.dispatchTouchEvent(event);
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        if (mMode == Captcha.MODE_NONBAR && verfityBlock != null) {
+            float x = event.getX();
+            float y = event.getY();
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    downX = x;
+                    downY = y;
+                    downByTouch(x, y);
+                    break;
+                case MotionEvent.ACTION_UP:
+                    loose();
+                    break;
+                case MotionEvent.ACTION_MOVE:
+                    float offsetX = x - tempX;
+                    float offsetY = y - tempY;
+                    moveByTouch(offsetX, offsetY);
+                    break;
+            }
+            tempX = x;
+            tempY = y;
+        }
+        return true;
+    }
 
     public static class PositionInfo {
 

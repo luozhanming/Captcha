@@ -36,7 +36,7 @@ public abstract class CaptchaStrategy {
      * @param height picture height
      * @return position info of the block
      */
-    public abstract PictureVertifyView.PositionInfo getBlockPostionInfo(int width, int height);
+    public abstract PictureVertifyView.PositionInfo getBlockPostionInfo(int width, int height,int blockSize);
 
     /**
      * 获得缺块阴影的Paint

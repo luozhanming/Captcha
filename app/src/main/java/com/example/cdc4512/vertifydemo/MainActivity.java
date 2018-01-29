@@ -23,9 +23,13 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailed() {
-                Toast.makeText(MainActivity.this,"验证失败",Toast.LENGTH_SHORT).show();
+            public void onFailed(int count) {
+                Toast.makeText(MainActivity.this,"验证失败,失败次数"+count,Toast.LENGTH_SHORT).show();
+                if(count==captcha.getMaxFailedCount()){
+                    Toast.makeText(MainActivity.this,"验证超过次数，你的帐号被封锁",Toast.LENGTH_SHORT).show();
+                }
             }
+
         });
     }
 }
