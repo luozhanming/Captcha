@@ -58,9 +58,20 @@ public class Captcha extends LinearLayout {
 
     public interface CaptchaListener {
 
+        /**
+         * 验证通过
+         */
         void onAccess(long time);
 
+        /**
+         * 验证失败
+         */
         void onFailed(int failCount);
+
+        /**
+         * 验证已达次数
+         */
+        void onMaxFailed();
 
     }
 
@@ -81,7 +92,7 @@ public class Captcha extends LinearLayout {
         thumbDrawableId = typedArray.getResourceId(R.styleable.Captcha_thumbDrawable, R.drawable.thumb);
         mMode = typedArray.getInteger(R.styleable.Captcha_mode, MODE_BAR);
         maxFailedCount = typedArray.getInteger(R.styleable.Captcha_max_fail_count, 3);
-        blockSize = typedArray.getDimensionPixelSize(R.styleable.Captcha_blockSize,Utils.dp2px(getContext(),50));
+        blockSize = typedArray.getDimensionPixelSize(R.styleable.Captcha_blockSize, Utils.dp2px(getContext(), 50));
         typedArray.recycle();
         init();
     }
@@ -115,9 +126,13 @@ public class Captcha extends LinearLayout {
                 failCount++;
                 accessFailed.setVisibility(VISIBLE);
                 accessSuccess.setVisibility(GONE);
-                accessFailedText.setText(String.format(getResources().getString(R.string.vertify_failed), maxFailedCount-failCount));
+                accessFailedText.setText(String.format(getResources().getString(R.string.vertify_failed), maxFailedCount - failCount));
                 if (mListener != null) {
-                    mListener.onFailed(failCount);
+                    if (failCount == maxFailedCount) {
+                        mListener.onMaxFailed();
+                    } else {
+                        mListener.onFailed(failCount);
+                    }
                 }
             }
 
@@ -194,19 +209,19 @@ public class Captcha extends LinearLayout {
         }
     }
 
-    public int getMode(){
+    public int getMode() {
         return this.mMode;
     }
 
-    public void setMaxFailedCount(int count){
+    public void setMaxFailedCount(int count) {
         this.maxFailedCount = count;
     }
 
-    public int getMaxFailedCount(){
+    public int getMaxFailedCount() {
         return this.maxFailedCount;
     }
 
-    public void setBitmap(Bitmap bitmap){
+    public void setBitmap(Bitmap bitmap) {
         vertifyView.setBitmap(bitmap);
     }
 
