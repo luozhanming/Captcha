@@ -20,7 +20,7 @@ Android滑块拼图验证码控件
 |setSeekBarStyle(int progressDrawable, int thumbDrawable)| 设置滑动条样式 |1.0.5开始
 
 
-## Attributes属性（captcha布局文件中调用）
+## Attributes（captcha布局文件中调用）
 |Attributes|forma|describe
 |---|---|---|
 |mode| enum |mode_bar:带滑动条 mode_nonbar:不带滑动条
@@ -55,7 +55,7 @@ compile 'com.luozm.captcha:captcha:1.0.8'
             }
 
             @Override
-            public void onFailed() {
+            public void onFailed(int failedCount) {
                 Toast.makeText(MainActivity.this,"验证失败",Toast.LENGTH_SHORT).show();
             }
             
