@@ -11,7 +11,7 @@ Android滑块拼图验证码控件
 ## Method
 |方法名|描述|版本限制
 |---|---|---|
-|setMode(int mode)| 设置验证模式（默认为MODE_NONBAR）|1.0.8开始
+|setMode(int mode)| 设置验证模式（默认为MODE_BAR）|1.0.8开始
 |setMaxFailedCount(int count)| 设置最大验证失败次数（默认为5次）|1.0.8开始
 |setBitmap(Bitmap bitmap)| 设置图片|1.0.8开始
 |setBlockSize(int blockSize)| 设置滑块图片大小，单位px（默认50dp）|1.0.8开始
