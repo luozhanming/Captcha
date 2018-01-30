@@ -58,6 +58,11 @@ compile 'com.luozm.captcha:captcha:1.0.8'
             public void onFailed() {
                 Toast.makeText(MainActivity.this,"验证失败",Toast.LENGTH_SHORT).show();
             }
+            
+            @Override
+            public void onMaxFailed() {
+                Toast.makeText(MainActivity.this,"验证超过次数，你的帐号被封锁",Toast.LENGTH_SHORT).show();
+            }
         });
 ```
 4.(可选)自定义拼图样式<br>
