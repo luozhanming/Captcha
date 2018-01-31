@@ -158,6 +158,9 @@ captCha.setCaptchaStrategy(new XXXCaptchaStrategy(context));
 
 http://blog.csdn.net/sdfsdfdfa/article/details/79120665
 
+## 使用者须知
+若使用过程中发现bug或想提出修改建议，请Issues留言或者自行修复并提交Pull request。我会在最快时间内处理。万分感谢!
+
 ## License
 ```xml
 Captcha library for Android
