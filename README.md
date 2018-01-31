@@ -40,11 +40,11 @@ Android滑块拼图验证码控件
 
 
 ## Usage
-1.在app的build.gradle添加依赖
+### 1.在app的build.gradle添加依赖
 ```Groovy
 compile 'com.luozm.captcha:captcha:1.0.9'
 ```
-2.将Captcha添加至布局
+### 2.将Captcha添加至布局
 ```xml
 <com.luozm.captcha.Captcha
         android:id="@+id/captCha"
@@ -52,7 +52,7 @@ compile 'com.luozm.captcha:captcha:1.0.9'
         android:layout_height="wrap_content"
         app:src="@mipmap/cat"/>
 ```
-3.在编写Java代码
+### 3.添加Java代码
 
 ```Java
    captcha = (Captcha) findViewById(R.id.captCha);
@@ -76,8 +76,8 @@ compile 'com.luozm.captcha:captcha:1.0.9'
             }
         });
 ```
-4.(可选)自定义拼图样式<br>
-  1.编写策略类,继承CaptchaStrategy类，重写策略方法,具体可参考DefaultCaptchaStrategy类
+### 4.(可选)自定义拼图样式<br>
+#### 1.编写策略类,继承CaptchaStrategy类，重写策略方法,具体可参考DefaultCaptchaStrategy类
   ```Java
   public abstract class CaptchaStrategy {
 
@@ -138,12 +138,12 @@ compile 'com.luozm.captcha:captcha:1.0.9'
 }
 
   ```
-  2.添加Java代码
+ #### 2.添加Java代码
 ```Java
 captCha.setCaptchaStrategy(new XXXCaptchaStrategy(context));
 ```
 
-5.(可选)自定义滑块条
+### 5.(可选)自定义滑块条
    与Seekbar自定义样式一样
 ```xml
 <com.luozm.captcha.Captcha
