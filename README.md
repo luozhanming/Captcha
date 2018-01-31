@@ -21,7 +21,7 @@ Android滑块拼图验证码控件
 
 
 ## Attributes（captcha布局文件中调用）
-|Attributes|forma|describe
+|属性名|类型|描述
 |---|---|---|
 |mode| enum |mode_bar:带滑动条 mode_nonbar:不带滑动条
 |src| reference| 图片
@@ -31,7 +31,7 @@ Android滑块拼图验证码控件
 |blockSize| dimension|缺块大小
 
 ## Version Update
-|Version|describe
+|版本号|描述
 |---|---
 |v1.0.5| 可用基本功能
 |v1.0.8| 添加可定制属性，查看Method
