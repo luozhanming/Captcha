@@ -59,19 +59,27 @@ public class Captcha extends LinearLayout {
     public interface CaptchaListener {
 
         /**
-         * 验证通过
+         * Called when captcha access.
+         *
+         * @param time cost of access time
+         * @return text to show,show default when return null
          */
-        void onAccess(long time);
+        String onAccess(long time);
 
         /**
-         * 验证失败
+         * Called when captcha failed.
+         *
+         * @param failCount fail count
+         * @return text to show,show default when return null
          */
-        void onFailed(int failCount);
+        String onFailed(int failCount);
 
         /**
-         * 验证已达次数
+         * Called when captcha failed
+         *
+         * @return text to show,show default when return null
          */
-        void onMaxFailed();
+        String onMaxFailed();
 
     }
 
@@ -113,11 +121,15 @@ public class Captcha extends LinearLayout {
             @Override
             public void onSuccess(long time) {
                 if (mListener != null) {
-                    mListener.onAccess(time);
+                    String s = mListener.onAccess(time);
+                    if (s != null) {
+                        accessText.setText(s);
+                    } else {
+                        accessText.setText(String.format(getResources().getString(R.string.vertify_access), time));
+                    }
                 }
                 accessSuccess.setVisibility(VISIBLE);
                 accessFailed.setVisibility(GONE);
-                accessText.setText(String.format(getResources().getString(R.string.vertify_access), time));
             }
 
             @Override
@@ -126,12 +138,21 @@ public class Captcha extends LinearLayout {
                 failCount++;
                 accessFailed.setVisibility(VISIBLE);
                 accessSuccess.setVisibility(GONE);
-                accessFailedText.setText(String.format(getResources().getString(R.string.vertify_failed), maxFailedCount - failCount));
                 if (mListener != null) {
                     if (failCount == maxFailedCount) {
-                        mListener.onMaxFailed();
+                        String s = mListener.onMaxFailed();
+                        if (s != null) {
+                            accessFailedText.setText(s);
+                        } else {
+                            accessFailedText.setText(String.format(getResources().getString(R.string.vertify_failed), maxFailedCount - failCount));
+                        }
                     } else {
-                        mListener.onFailed(failCount);
+                        String s = mListener.onFailed(failCount);
+                        if (s != null) {
+                            accessFailedText.setText(s);
+                        } else {
+                            accessFailedText.setText(String.format(getResources().getString(R.string.vertify_failed), maxFailedCount - failCount));
+                        }
                     }
                 }
             }
