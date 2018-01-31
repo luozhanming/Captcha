@@ -18,6 +18,7 @@ Android滑块拼图验证码控件
 |setBlockSize(int blockSize)| 设置滑块图片大小，单位px（默认50dp）|1.0.8开始
 |setCaptchaStrategy(CaptchaStrategy strategy)|设置验证策略 |1.0.5开始
 |setSeekBarStyle(int progressDrawable, int thumbDrawable)| 设置滑动条样式 |1.0.5开始
+|setCaptchaListener(CaptchaListener progressDrawable)| 设置验证回调|1.0.0开始
 
 
 ## Attributes（captcha布局文件中调用）
