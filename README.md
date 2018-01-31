@@ -7,7 +7,7 @@ Android滑块拼图验证码控件
 1.简单，实用，只需一两句代码即可使用<br>
 2.采用策略模式为使用者开放自定义拼图样式策略，对拼图样式(拼图形状、视觉效果)进行定制<br>
 3.自选模式，无滑动条模式（手触移动),有滑动条模式<br>
-4.通过监听器回调用户可获得验证通过时间和验证失败的次数已对这些情况进行进一步处理提高安全性<br>
+4.通过监听器回调用户可获得验证通过时间和验证失败的次数以对这些情况进行进一步处理(如对帐号进行封锁，禁止部分操作)提高安全性<br>
 
 ## Method
 |方法名|描述|版本限制
@@ -20,7 +20,7 @@ Android滑块拼图验证码控件
 |setSeekBarStyle(int progressDrawable, int thumbDrawable)| 设置滑动条样式 |1.0.5开始
 
 
-## Attributes属性（captcha布局文件中调用）
+## Attributes（captcha布局文件中调用）
 |Attributes|forma|describe
 |---|---|---|
 |mode| enum |mode_bar:带滑动条 mode_nonbar:不带滑动条
@@ -55,8 +55,13 @@ compile 'com.luozm.captcha:captcha:1.0.8'
             }
 
             @Override
-            public void onFailed() {
+            public void onFailed(int failedCount) {
                 Toast.makeText(MainActivity.this,"验证失败",Toast.LENGTH_SHORT).show();
+            }
+            
+            @Override
+            public void onMaxFailed() {
+                Toast.makeText(MainActivity.this,"验证超过次数，你的帐号被封锁",Toast.LENGTH_SHORT).show();
             }
         });
 ```
