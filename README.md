@@ -30,11 +30,19 @@ Android滑块拼图验证码控件
 |max_fail_count| integer|最大验证失败次数
 |blockSize| dimension|缺块大小
 
+## Version Update
+|Version|describe
+|---|---
+|v1.0.5| 可用基本功能
+|v1.0.8| 添加可定制属性，查看Method
+|v1.0.9| 对回调CaptchaListener返回参数修改，以让使用者自定义图片底部阴影文本
+
+
 
 ## Usage
 1.在app的build.gradle添加依赖
 ```Groovy
-compile 'com.luozm.captcha:captcha:1.0.8'
+compile 'com.luozm.captcha:captcha:1.0.9'
 ```
 2.将Captcha添加至布局
 ```xml
@@ -50,19 +58,22 @@ compile 'com.luozm.captcha:captcha:1.0.8'
    captcha = (Captcha) findViewById(R.id.captCha);
    captcha.setCaptchaListener(new Captcha.CaptchaListener() {
             @Override
-            public void onAccess(long time) {
+            public String onAccess(long time) {
                 Toast.makeText(MainActivity.this,"验证成功",Toast.LENGTH_SHORT).show();
-            }
+                return "验证通过,耗时"+time+"毫秒";
+            }
 
             @Override
-            public void onFailed(int failedCount) {
+            public String onFailed(int failedCount) {
                 Toast.makeText(MainActivity.this,"验证失败",Toast.LENGTH_SHORT).show();
+                return "验证失败,已失败"+failedCount+"次";
             }
             
             @Override
-            public void onMaxFailed() {
+            public String onMaxFailed() {
                 Toast.makeText(MainActivity.this,"验证超过次数，你的帐号被封锁",Toast.LENGTH_SHORT).show();
-            }
+                  return "验证失败,帐号已封锁";
+            }
         });
 ```
 4.(可选)自定义拼图样式<br>
