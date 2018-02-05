@@ -37,7 +37,7 @@ Android滑块拼图验证码控件
 |v1.0.5| 可用基本功能
 |v1.0.8| 添加可定制属性，查看Method
 |v1.0.9| 对回调CaptchaListener返回参数修改，以让使用者自定义图片底部阴影文本
-
+|v1.1.0| 修复重写CaptchaStrategy类编译时报错
 
 
 ## Usage
