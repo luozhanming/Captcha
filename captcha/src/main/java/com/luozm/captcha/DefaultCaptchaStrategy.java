@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.support.annotation.NonNull;
 
 import java.util.Random;
 
@@ -40,29 +41,29 @@ public class DefaultCaptchaStrategy extends CaptchaStrategy {
     }
 
     @Override
-    public PictureVertifyView.PositionInfo getBlockPostionInfo(int width, int height,int blockSize) {
+    public  @NonNull PositionInfo getBlockPostionInfo(int width, int height, int blockSize) {
         Random random = new Random();
-        int left = random.nextInt(width - blockSize);
+        int left = random.nextInt(width - blockSize +1);
         //Avoid robot frequently and quickly click the start point to access the captcha.
         if (left < blockSize) {
             left = blockSize;
         }
-        int top = random.nextInt(height - blockSize);
+        int top = random.nextInt(height - blockSize +1);
         if (top < 0) {
             top = 0;
         }
-        return new PictureVertifyView.PositionInfo(left, top);
+        return new PositionInfo(left, top);
     }
 
     @Override
-    public PictureVertifyView.PositionInfo getPositionInfoForSwipeBlock(int width, int height, int blockSize) {
+    public @NonNull PositionInfo getPositionInfoForSwipeBlock(int width, int height, int blockSize) {
         Random random = new Random();
-        int left = random.nextInt(width - blockSize);
-        int top = random.nextInt(height - blockSize);
+        int left = random.nextInt(width - blockSize+1);
+        int top = random.nextInt(height - blockSize+1);
         if (top < 0) {
             top = 0;
         }
-        return new PictureVertifyView.PositionInfo(left, top);
+        return new PositionInfo(left, top);
     }
 
     @Override

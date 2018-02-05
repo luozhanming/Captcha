@@ -260,14 +260,4 @@ class PictureVertifyView extends AppCompatImageView {
         return true;
     }
 
-    public static class PositionInfo {
-
-        int left;
-        int top;
-
-        public PositionInfo(int left, int top) {
-            this.left = left;
-            this.top = top;
-        }
-    }
 }
