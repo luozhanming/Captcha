@@ -43,7 +43,7 @@ Android滑块拼图验证码控件
 ## Usage
 ### 1.在app的build.gradle添加依赖
 ```Groovy
-compile 'com.luozm.captcha:captcha:1.0.9'
+compile 'com.luozm.captcha:captcha:1.1.0'
 ```
 ### 2.将Captcha添加至布局
 ```xml
