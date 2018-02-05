@@ -107,7 +107,7 @@ compile 'com.luozm.captcha:captcha:1.1.0'
      * @param height picture height
      * @return position info of the block
      */
-    public abstract PictureVertifyView.PositionInfo getBlockPostionInfo(int width, int height, int blockSize);
+    public abstract PositionInfo getBlockPostionInfo(int width, int height, int blockSize);
 
     /**
      * 定义滑块图片的位置信息(只有设置为无滑动条模式有用并建议重写)
@@ -116,7 +116,7 @@ compile 'com.luozm.captcha:captcha:1.1.0'
      * @param height picture height
      * @return position info of the block
      */
-    public PictureVertifyView.PositionInfo getPositionInfoForSwipeBlock(int width, int height, int blockSize){
+    public PositionInfo getPositionInfoForSwipeBlock(int width, int height, int blockSize){
         return getBlockPostionInfo(width,height,blockSize);
     }
 
