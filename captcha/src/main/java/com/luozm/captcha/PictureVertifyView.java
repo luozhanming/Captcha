@@ -5,6 +5,8 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
@@ -30,15 +32,18 @@ class PictureVertifyView extends AppCompatImageView {
 
 
     private int mState = STATE_IDEL;
-    private PositionInfo shadowInfo;
-    private PositionInfo blockInfo;
-    private Bitmap verfityBlock;
-    private Path blockShape;
-    private Paint bitmapPaint;
-    private Paint shadowPaint;
+    private PositionInfo shadowInfo;    //缺块阴影的位置
+    private PositionInfo blockInfo;     //缺块图片的位置
+    private Bitmap verfityBlock;        //缺块图片
+    private Path blockShape;            //缺块形状
+    private Paint bitmapPaint;         //绘制缺块图片的画笔
+    private Paint shadowPaint;         //绘制缺块阴影的画笔
     private long startTouchTime;
     private long looseTime;
     private int blockSize = 50;
+
+    private boolean mTouchEnable = true;   //是否可触动
+
 
     private Callback callback;
 
@@ -47,9 +52,9 @@ class PictureVertifyView extends AppCompatImageView {
     private int mMode;
 
 
-
-    interface Callback{
+    interface Callback {
         void onSuccess(long time);
+
         void onFailed();
     }
 
@@ -77,9 +82,9 @@ class PictureVertifyView extends AppCompatImageView {
         super.onDraw(canvas);
         if (shadowInfo == null) {
             shadowInfo = mStrategy.getBlockPostionInfo(getWidth(), getHeight(), blockSize);
-            if(mMode==Captcha.MODE_BAR){
+            if (mMode == Captcha.MODE_BAR) {
                 blockInfo = new PositionInfo(0, shadowInfo.top);
-            }else{
+            } else {
                 blockInfo = mStrategy.getPositionInfoForSwipeBlock(getWidth(), getHeight(), blockSize);
             }
         }
@@ -93,7 +98,7 @@ class PictureVertifyView extends AppCompatImageView {
         if (mState != STATE_ACCESS) {
             canvas.drawPath(blockShape, shadowPaint);
         }
-        if (mState == STATE_MOVE || mState == STATE_IDEL || mState == STATE_DOWN) {
+        if (mState == STATE_MOVE || mState == STATE_IDEL || mState == STATE_DOWN || mState == STATE_UNACCESS) {
             canvas.drawBitmap(verfityBlock, blockInfo.left, blockInfo.top, bitmapPaint);
         }
 
@@ -137,7 +142,6 @@ class PictureVertifyView extends AppCompatImageView {
 
     void reset() {
         mState = STATE_IDEL;
-        verfityBlock.recycle();
         verfityBlock = null;
         shadowInfo = null;
         blockShape = null;
@@ -167,7 +171,7 @@ class PictureVertifyView extends AppCompatImageView {
         this.blockSize = size;
         this.blockShape = null;
         this.blockInfo = null;
-        this.shadowInfo =null;
+        this.shadowInfo = null;
         this.verfityBlock = null;
         invalidate();
     }
@@ -175,7 +179,8 @@ class PictureVertifyView extends AppCompatImageView {
     public void setBitmap(Bitmap bitmap) {
         this.blockShape = null;
         this.blockInfo = null;
-        this.shadowInfo =null;
+        this.shadowInfo = null;
+        this.verfityBlock.recycle();
         this.verfityBlock = null;
         setImageBitmap(bitmap);
     }
@@ -184,9 +189,14 @@ class PictureVertifyView extends AppCompatImageView {
         this.mMode = mode;
         this.blockShape = null;
         this.blockInfo = null;
-        this.shadowInfo =null;
+        this.shadowInfo = null;
         this.verfityBlock = null;
         invalidate();
+    }
+
+
+    void setTouchEnable(boolean enable) {
+        this.mTouchEnable = enable;
     }
 
     private Bitmap createBlockBitmap() {
@@ -206,6 +216,9 @@ class PictureVertifyView extends AppCompatImageView {
         return result;
     }
 
+    /**
+     * 检测是否通过
+     */
     private void checkAccess() {
         if (Math.abs(blockInfo.left - shadowInfo.left) < TOLERANCE && Math.abs(blockInfo.top - shadowInfo.top) < TOLERANCE) {
             access();
@@ -236,7 +249,7 @@ class PictureVertifyView extends AppCompatImageView {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (mMode == Captcha.MODE_NONBAR && verfityBlock != null) {
+        if (mMode == Captcha.MODE_NONBAR && verfityBlock != null && mTouchEnable) {
             float x = event.getX();
             float y = event.getY();
             switch (event.getAction()) {

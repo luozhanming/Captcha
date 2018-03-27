@@ -1,8 +1,13 @@
 package com.luozm.captcha;
 
+import android.animation.Animator;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.AttrRes;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.IntDef;
@@ -11,6 +16,9 @@ import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.RotateAnimation;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -28,6 +36,7 @@ public class Captcha extends LinearLayout {
     private TextSeekbar seekbar;
     private View accessSuccess, accessFailed;
     private TextView accessText, accessFailedText;
+    private ImageView refreshView;
 
     private int drawableId;
     private int progressDrawableId;
@@ -114,6 +123,7 @@ public class Captcha extends LinearLayout {
         accessFailed = parentView.findViewById(R.id.accessFailed);
         accessText = (TextView) parentView.findViewById(R.id.accessText);
         accessFailedText = (TextView) parentView.findViewById(R.id.accessFailedText);
+        refreshView = (ImageView) parentView.findViewById(R.id.refresh);
         setMode(mMode);
         vertifyView.setImageResource(drawableId);
         setBlockSize(blockSize);
@@ -124,7 +134,7 @@ public class Captcha extends LinearLayout {
                     String s = mListener.onAccess(time);
                     if (s != null) {
                         accessText.setText(s);
-                    } else {
+                    } else {//默认文案
                         accessText.setText(String.format(getResources().getString(R.string.vertify_access), time));
                     }
                 }
@@ -134,8 +144,9 @@ public class Captcha extends LinearLayout {
 
             @Override
             public void onFailed() {
-                reset(false);
-                failCount++;
+                seekbar.setEnabled(false);
+                vertifyView.setTouchEnable(false);
+                failCount = failCount > maxFailedCount ? maxFailedCount : failCount + 1;
                 accessFailed.setVisibility(VISIBLE);
                 accessSuccess.setVisibility(GONE);
                 if (mListener != null) {
@@ -143,14 +154,14 @@ public class Captcha extends LinearLayout {
                         String s = mListener.onMaxFailed();
                         if (s != null) {
                             accessFailedText.setText(s);
-                        } else {
+                        } else {//默认文案
                             accessFailedText.setText(String.format(getResources().getString(R.string.vertify_failed), maxFailedCount - failCount));
                         }
                     } else {
                         String s = mListener.onFailed(failCount);
                         if (s != null) {
                             accessFailedText.setText(s);
-                        } else {
+                        } else {//默认文案
                             accessFailedText.setText(String.format(getResources().getString(R.string.vertify_failed), maxFailedCount - failCount));
                         }
                     }
@@ -191,6 +202,38 @@ public class Captcha extends LinearLayout {
                 }
             }
         });
+        refreshView.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startRefresh(v);
+            }
+        });
+    }
+
+    private void startRefresh(View v) {
+        v.animate().rotationBy(360).setDuration(500)
+                .setInterpolator(new AccelerateDecelerateInterpolator())
+                .setListener(new Animator.AnimatorListener() {
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        reset(false);
+                    }
+
+                    @Override
+                    public void onAnimationCancel(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animator animation) {
+
+                    }
+                });
     }
 
 
@@ -225,9 +268,12 @@ public class Captcha extends LinearLayout {
         vertifyView.setMode(mode);
         if (mMode == MODE_NONBAR) {
             seekbar.setVisibility(GONE);
+            vertifyView.setTouchEnable(true);
         } else {
             seekbar.setVisibility(VISIBLE);
+            seekbar.setEnabled(true);
         }
+        hideText();
     }
 
     public int getMode() {
@@ -242,8 +288,15 @@ public class Captcha extends LinearLayout {
         return this.maxFailedCount;
     }
 
+
+    public void setBitmap(int drawableId) {
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), drawableId);
+        setBitmap(bitmap);
+    }
+
     public void setBitmap(Bitmap bitmap) {
-        vertifyView.setBitmap(bitmap);
+        vertifyView.setImageBitmap(bitmap);
+        reset(false);
     }
 
 
@@ -251,11 +304,22 @@ public class Captcha extends LinearLayout {
      * 复位
      */
     public void reset(boolean clearFailed) {
+        hideText();
         vertifyView.reset();
-        seekbar.setProgress(0);
         if (clearFailed) {
             failCount = 0;
         }
+        if (mMode == MODE_BAR){
+            seekbar.setEnabled(true);
+            seekbar.setProgress(0);
+        }else{
+            vertifyView.setTouchEnable(true);
+        }
+    }
+
+    public void hideText() {
+        accessFailed.setVisibility(GONE);
+        accessSuccess.setVisibility(GONE);
     }
 
 

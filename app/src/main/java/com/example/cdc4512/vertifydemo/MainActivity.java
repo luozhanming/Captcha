@@ -54,4 +54,25 @@ public class MainActivity extends AppCompatActivity {
 
         });
     }
+
+
+    boolean isCat = true;
+    public void changePicture(View view){
+        if(isCat){
+            captcha.setBitmap(R.mipmap.cat1);
+        }else{
+            captcha.setBitmap(R.mipmap.cat);
+        }
+        isCat=!isCat;
+    }
+
+    boolean isSeekbar1 = false;
+    public void changeProgressDrawable(View view){
+        if(isSeekbar1){
+            captcha.setSeekBarStyle(R.drawable.po_seekbar,R.drawable.thumb);
+        }else{
+            captcha.setSeekBarStyle(R.drawable.po_seekbar1,R.drawable.thumb1);
+        }
+        isSeekbar1=!isSeekbar1;
+    }
 }
