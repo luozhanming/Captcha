@@ -1,7 +1,7 @@
 # Captcha
 Android滑块拼图验证码控件
 
-<img src="https://github.com/luozhanming/Captcha/blob/master/GIF_20180129_180253.gif" width="180" height="320" />
+<img src="https://github.com/luozhanming/Captcha/blob/master/GIF_20180327_113233.gif" width="180" height="320" />
 
 ## Feature
 1.简单，实用，只需一两句代码即可使用<br>
