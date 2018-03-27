@@ -162,6 +162,9 @@ captCha.setCaptchaStrategy(new XXXCaptchaStrategy(context));
 captcha.setSeekBarStyle(R.drawable.po_seekbar,R.drawable.thumb);
 ```
 
+### 6.关于使用网络图片
+   本控件暂不支持加载网络图片，若需要使用网络图片，请将从网络加载好的Bitmap对象放到setBitmap(Bitmap bitmap)参数中。
+
 ## 博文地址
 
 http://blog.csdn.net/sdfsdfdfa/article/details/79120665
