@@ -15,6 +15,7 @@ Android滑块拼图验证码控件
 |setMode(int mode)| 设置验证模式（默认为MODE_BAR）|1.0.8开始
 |setMaxFailedCount(int count)| 设置最大验证失败次数（默认为5次）|1.0.8开始
 |setBitmap(Bitmap bitmap)| 设置图片|1.0.8开始
+|setBitmap(int drawableId)| 设置图片|1.1.1开始
 |setBlockSize(int blockSize)| 设置滑块图片大小，单位px（默认50dp）|1.0.8开始
 |setCaptchaStrategy(CaptchaStrategy strategy)|设置验证策略 |1.0.5开始
 |setSeekBarStyle(int progressDrawable, int thumbDrawable)| 设置滑动条样式 |1.0.5开始
@@ -38,12 +39,13 @@ Android滑块拼图验证码控件
 |v1.0.8| 添加可定制属性，查看Method
 |v1.0.9| 对回调CaptchaListener返回参数修改，以让使用者自定义图片底部阴影文本
 |v1.1.0| 修复重写CaptchaStrategy类编译时报错
+|v1.1.1| 1.优化体验 2.添加刷新按钮，取消原来验证失败重置的设定，改为用刷新按钮重置
 
 
 ## Usage
 ### 1.在app的build.gradle添加依赖
 ```Groovy
-compile 'com.luozm.captcha:captcha:1.1.0'
+compile 'com.luozm.captcha:captcha:1.1.1'
 ```
 ### 2.将Captcha添加至布局
 ```xml
@@ -151,7 +153,13 @@ captCha.setCaptchaStrategy(new XXXCaptchaStrategy(context));
         android:id="@+id/captCha"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:progressDrawable="@drawable/progress"
+        app:thumbDrawable="@drawable/thumb"
         app:src="@mipmap/cat"/>
+```
+
+```Java
+captcha.setSeekBarStyle(R.drawable.po_seekbar,R.drawable.thumb);
 ```
 
 ## 博文地址
