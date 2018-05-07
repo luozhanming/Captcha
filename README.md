@@ -1,7 +1,7 @@
 # Captcha
 Android滑块拼图验证码控件
 
-<img src="https://github.com/luozhanming/Captcha/blob/master/GIF_20180129_180253.gif" width="180" height="320" />
+<img src="https://github.com/luozhanming/Captcha/blob/master/GIF_20180327_113233.gif" width="180" height="320" />
 
 ## Feature
 1.简单，实用，只需一两句代码即可使用<br>
@@ -161,6 +161,9 @@ captCha.setCaptchaStrategy(new XXXCaptchaStrategy(context));
 ```Java
 captcha.setSeekBarStyle(R.drawable.po_seekbar,R.drawable.thumb);
 ```
+
+### 6.关于使用网络图片
+   本控件暂不支持加载网络图片，若需要使用网络图片，请将从网络加载好的Bitmap对象放到setBitmap(Bitmap bitmap)参数中。
 
 ## 博文地址
 
