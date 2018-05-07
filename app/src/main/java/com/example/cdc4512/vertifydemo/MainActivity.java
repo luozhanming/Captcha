@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
     boolean isCat = true;
     public void changePicture(View view){
         if(isCat){
-            captcha.setBitmap(R.mipmap.cat1);
+            captcha.setBitmap("http://img4.imgtn.bdimg.com/it/u=2091068830,1003707060&fm=200&gp=0.jpg");
         }else{
             captcha.setBitmap(R.mipmap.cat);
         }

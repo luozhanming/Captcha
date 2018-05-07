@@ -5,9 +5,6 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.support.annotation.AttrRes;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.IntDef;
@@ -17,14 +14,10 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
-import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
-
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
 
 /**
  * Created by luozhanming on 2018/1/17.
@@ -51,6 +44,8 @@ public class Captcha extends LinearLayout {
     private boolean isDown;
 
     private CaptchaListener mListener;
+
+    private BitmapLoaderTask mTask;
     /**
      * 带滑动条验证模式
      */
@@ -299,6 +294,16 @@ public class Captcha extends LinearLayout {
         reset(false);
     }
 
+    public void setBitmap(String url) {
+        BitmapLoaderTask task = new BitmapLoaderTask(new BitmapLoaderTask.Callback() {
+            @Override
+            public void result(Bitmap bitmap) {
+                setBitmap(bitmap);
+            }
+        });
+        task.execute(url);
+    }
+
 
     /**
      * 复位
@@ -309,10 +314,10 @@ public class Captcha extends LinearLayout {
         if (clearFailed) {
             failCount = 0;
         }
-        if (mMode == MODE_BAR){
+        if (mMode == MODE_BAR) {
             seekbar.setEnabled(true);
             seekbar.setProgress(0);
-        }else{
+        } else {
             vertifyView.setTouchEnable(true);
         }
     }
