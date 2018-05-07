@@ -14,7 +14,7 @@ import java.net.URL;
  * Created by cdc4512 on 2018/5/7.
  */
 
-public class BitmapLoaderTask extends AsyncTask<String, Integer, Bitmap> {
+class BitmapLoaderTask extends AsyncTask<String, Integer, Bitmap> {
 
     private Callback callback;
 
@@ -22,7 +22,7 @@ public class BitmapLoaderTask extends AsyncTask<String, Integer, Bitmap> {
         this.callback = callback;
     }
 
-    public interface Callback{
+    interface Callback{
          void result(Bitmap bitmap);
     }
     @Override
