@@ -8,6 +8,7 @@ Android滑块拼图验证码控件
 2.采用策略模式为使用者开放自定义拼图样式策略，对拼图样式(拼图形状、视觉效果)进行定制<br>
 3.自选模式，无滑动条模式（手触移动),有滑动条模式<br>
 4.通过监听器回调用户可获得验证通过时间和验证失败的次数以对这些情况进行进一步处理(如对帐号进行封锁，禁止部分操作)提高安全性<br>
+5.支持加载网络图片
 
 ## Method
 |方法名|描述|版本限制
@@ -16,6 +17,7 @@ Android滑块拼图验证码控件
 |setMaxFailedCount(int count)| 设置最大验证失败次数（默认为5次）|1.0.8开始
 |setBitmap(Bitmap bitmap)| 设置图片|1.0.8开始
 |setBitmap(int drawableId)| 设置图片|1.1.1开始
+|setBitmap(String imgUrl)| 设置图片|1.1.2开始
 |setBlockSize(int blockSize)| 设置滑块图片大小，单位px（默认50dp）|1.0.8开始
 |setCaptchaStrategy(CaptchaStrategy strategy)|设置验证策略 |1.0.5开始
 |setSeekBarStyle(int progressDrawable, int thumbDrawable)| 设置滑动条样式 |1.0.5开始
@@ -40,6 +42,7 @@ Android滑块拼图验证码控件
 |v1.0.9| 对回调CaptchaListener返回参数修改，以让使用者自定义图片底部阴影文本
 |v1.1.0| 修复重写CaptchaStrategy类编译时报错
 |v1.1.1| 1.优化体验 2.添加刷新按钮，取消原来验证失败重置的设定，改为用刷新按钮重置
+|v1.1.2| 添加支持网络图片
 
 
 ## Usage
@@ -59,6 +62,7 @@ compile 'com.luozm.captcha:captcha:1.1.1'
 
 ```Java
    captcha = (Captcha) findViewById(R.id.captCha);
+   captcha.setBitmap(url);
    captcha.setCaptchaListener(new Captcha.CaptchaListener() {
             @Override
             public String onAccess(long time) {
@@ -162,8 +166,6 @@ captCha.setCaptchaStrategy(new XXXCaptchaStrategy(context));
 captcha.setSeekBarStyle(R.drawable.po_seekbar,R.drawable.thumb);
 ```
 
-### 6.关于使用网络图片
-   本控件暂不支持加载网络图片，若需要使用网络图片，请将从网络加载好的Bitmap对象放到setBitmap(Bitmap bitmap)参数中。
 
 ## 博文地址
 
