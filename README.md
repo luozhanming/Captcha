@@ -101,7 +101,7 @@ compile 'com.luozm.captcha:captcha:1.1.2'
     /**
      * 定义缺块的形状
      *
-     * @param blockSize 单位dp，注意转化为px
+     * @param blockSize 单位dp，注意转化为px,缺块的大小，注意Path的边界不要超出此大小
      * @return path of the shape
      */
     public abstract Path getBlockShape(int blockSize);
@@ -127,7 +127,7 @@ compile 'com.luozm.captcha:captcha:1.1.2'
     }
 
     /**
-     * 获得缺块阴影的Paint
+     * 定义缺块阴影的Paint
      */
     public abstract Paint getBlockShadowPaint();
 
@@ -138,6 +138,8 @@ compile 'com.luozm.captcha:captcha:1.1.2'
 
     /**
      * 装饰滑块图片，在绘制图片后执行，即绘制滑块前景
+     * @params canvas
+     * @params shape   缺块的形状
      */
     public void decoreateSwipeBlockBitmap(Canvas canvas, Path shape) {
 
