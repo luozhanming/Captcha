@@ -11,6 +11,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 /**
+ * 网络加载图片的Task类
  * Created by cdc4512 on 2018/5/7.
  */
 

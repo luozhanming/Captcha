@@ -11,6 +11,7 @@ import android.support.annotation.NonNull;
 import java.util.Random;
 
 /**
+ * 默认CaptchaStrategy
  * Created by luozhanming on 2018/1/19.
  */
 

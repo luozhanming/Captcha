@@ -15,11 +15,13 @@ import android.view.View;
 
 
 /**
+ * 拼图区域控件
  * Created by luozhanming on 2018/1/17.
  */
 
 class PictureVertifyView extends AppCompatImageView {
 
+    //状态码
     private static final int STATE_DOWN = 1;
     private static final int STATE_MOVE = 2;
     private static final int STATE_LOOSEN = 3;
@@ -28,18 +30,18 @@ class PictureVertifyView extends AppCompatImageView {
     private static final int STATE_UNACCESS = 6;
 
 
-    private static final int TOLERANCE = 10;
+    private static final int TOLERANCE = 10;         //验证的最大容差
 
 
-    private int mState = STATE_IDEL;
-    private PositionInfo shadowInfo;    //缺块阴影的位置
-    private PositionInfo blockInfo;     //缺块图片的位置
-    private Bitmap verfityBlock;        //缺块图片
-    private Path blockShape;            //缺块形状
-    private Paint bitmapPaint;         //绘制缺块图片的画笔
-    private Paint shadowPaint;         //绘制缺块阴影的画笔
-    private long startTouchTime;
-    private long looseTime;
+    private int mState = STATE_IDEL;    //当前状态
+    private PositionInfo shadowInfo;    //拼图缺块阴影的位置
+    private PositionInfo blockInfo;     //拼图缺块的位置
+    private Bitmap verfityBlock;        //拼图缺块Bitmap
+    private Path blockShape;            //拼图缺块形状
+    private Paint bitmapPaint;         //绘制拼图缺块的画笔
+    private Paint shadowPaint;         //绘制拼图缺块阴影的画笔
+    private long startTouchTime;       //滑动/触动开始时间
+    private long looseTime;            //滑动/触动松开时间
     private int blockSize = 50;
 
     private boolean mTouchEnable = true;   //是否可触动
@@ -49,7 +51,7 @@ class PictureVertifyView extends AppCompatImageView {
 
     private CaptchaStrategy mStrategy;
 
-    private int mMode;
+    private int mMode;                //Captcha验证模式
 
 
     interface Callback {
@@ -104,6 +106,9 @@ class PictureVertifyView extends AppCompatImageView {
 
     }
 
+    /**
+     *按下滑动条(滑动条模式)
+     * */
     void down(int progress) {
         startTouchTime = System.currentTimeMillis();
         mState = STATE_DOWN;
@@ -111,6 +116,9 @@ class PictureVertifyView extends AppCompatImageView {
         invalidate();
     }
 
+    /**
+     *触动拼图块(触动模式)
+     * */
     void downByTouch(float x, float y) {
         mState = STATE_DOWN;
         blockInfo.left = (int) (x - blockSize / 2f);
@@ -119,12 +127,17 @@ class PictureVertifyView extends AppCompatImageView {
         invalidate();
     }
 
+    /**
+     * 移动拼图缺块(滑动条模式)
+     */
     void move(int progress) {
         mState = STATE_MOVE;
         blockInfo.left = (int) (progress / 100f * (getWidth() - blockSize));
         invalidate();
     }
-
+    /**
+     * 触动拼图缺块(触动模式)
+     */
     void moveByTouch(float offsetX, float offsetY) {
         mState = STATE_MOVE;
         blockInfo.left += offsetX;
@@ -132,6 +145,9 @@ class PictureVertifyView extends AppCompatImageView {
         invalidate();
     }
 
+    /**
+     * 松开
+     * */
     void loose() {
         mState = STATE_LOOSEN;
         looseTime = System.currentTimeMillis();
@@ -140,6 +156,9 @@ class PictureVertifyView extends AppCompatImageView {
     }
 
 
+    /**
+     * 复位
+     * */
     void reset() {
         mState = STATE_IDEL;
         verfityBlock = null;
@@ -199,6 +218,9 @@ class PictureVertifyView extends AppCompatImageView {
         this.mTouchEnable = enable;
     }
 
+    /**
+     * 生成拼图缺块的Bitmap
+     * */
     private Bitmap createBlockBitmap() {
         Bitmap tempBitmap = Bitmap.createBitmap(getWidth(), getHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(tempBitmap);
@@ -209,6 +231,9 @@ class PictureVertifyView extends AppCompatImageView {
         return cropBitmap(tempBitmap);
     }
 
+    /**
+     * 保留拼图缺块大小的bitmap
+     * */
     private Bitmap cropBitmap(Bitmap bmp) {
         Bitmap result = null;
         result = Bitmap.createBitmap(bmp, shadowInfo.left, shadowInfo.top, blockSize, blockSize);
@@ -239,6 +264,7 @@ class PictureVertifyView extends AppCompatImageView {
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent event) {
+        //触动模式下，点击超出拼图缺块的区域不进行处理
         if (event.getAction() == MotionEvent.ACTION_DOWN && mMode == Captcha.MODE_NONBAR) {
             if (event.getX() < blockInfo.left || event.getX() > blockInfo.left + blockSize || event.getY() < blockInfo.top || event.getY() > blockInfo.top + blockSize) {
                 return false;
