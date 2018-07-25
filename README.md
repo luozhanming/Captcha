@@ -99,7 +99,7 @@ compile 'com.luozm.captcha:captcha:1.1.2'
     }
 
     /**
-     * 定义缺块的形状
+     * 定义拼图缺块的形状
      *
      * @param blockSize 单位dp，注意转化为px,缺块的大小，注意Path的边界不要超出此大小
      * @return path of the shape
@@ -107,7 +107,7 @@ compile 'com.luozm.captcha:captcha:1.1.2'
     public abstract Path getBlockShape(int blockSize);
 
     /**
-     * 定义缺块的位置信息
+     * 根据整张拼图的宽高和拼图缺块大小定义拼图缺块的位置
      *
      * @param width  picture width
      * @param height picture height
@@ -127,12 +127,12 @@ compile 'com.luozm.captcha:captcha:1.1.2'
     }
 
     /**
-     * 定义缺块阴影的Paint
+     * 定义拼图缺失部分阴影的Paint
      */
     public abstract Paint getBlockShadowPaint();
 
     /**
-     * 获得滑块图片的Paint
+     * 获得拼图缺块图片的Paint
      */
     public abstract Paint getBlockBitmapPaint();
 
