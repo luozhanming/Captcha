@@ -335,14 +335,10 @@ public class Captcha extends LinearLayout {
             vertifyView.setTouchEnable(true);
         }
     }
-
-<<<<<<< HEAD
+    
     /**
      * 隐藏成功失败文字显示
      * */
-=======
-    //隐藏成功/失败文字
->>>>>>> origin/master
     public void hideText() {
         accessFailed.setVisibility(GONE);
         accessSuccess.setVisibility(GONE);
