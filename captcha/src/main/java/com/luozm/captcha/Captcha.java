@@ -307,6 +307,7 @@ public class Captcha extends LinearLayout {
 
     /**
      * 复位
+     * @param clearFailed 是否清除失败次数
      */
     public void reset(boolean clearFailed) {
         hideText();
@@ -322,6 +323,9 @@ public class Captcha extends LinearLayout {
         }
     }
 
+    /**
+     * 隐藏成功失败文字显示
+     * */
     public void hideText() {
         accessFailed.setVisibility(GONE);
         accessSuccess.setVisibility(GONE);

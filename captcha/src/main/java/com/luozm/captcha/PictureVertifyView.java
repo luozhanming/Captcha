@@ -76,10 +76,7 @@ class PictureVertifyView extends AppCompatImageView {
         setLayerType(View.LAYER_TYPE_SOFTWARE, bitmapPaint);
     }
 
-
-    @Override
-    protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
+    private void initDrawElements(){
         if (shadowInfo == null) {
             shadowInfo = mStrategy.getBlockPostionInfo(getWidth(), getHeight(), blockSize);
             if (mMode == Captcha.MODE_BAR) {
@@ -95,6 +92,13 @@ class PictureVertifyView extends AppCompatImageView {
         if (verfityBlock == null) {
             verfityBlock = createBlockBitmap();
         }
+    }
+
+
+    @Override
+    protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
+        initDrawElements();
         if (mState != STATE_ACCESS) {
             canvas.drawPath(blockShape, shadowPaint);
         }
