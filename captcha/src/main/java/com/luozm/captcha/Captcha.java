@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.support.annotation.AttrRes;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.IntDef;
@@ -25,19 +26,20 @@ import android.widget.TextView;
 
 public class Captcha extends LinearLayout {
 
-    private PictureVertifyView vertifyView;
-    private TextSeekbar seekbar;
-    private View accessSuccess, accessFailed;
-    private TextView accessText, accessFailedText;
-    private ImageView refreshView;
-
-    private int drawableId;
-    private int progressDrawableId;
-    private int thumbDrawableId;
-    private int mMode;
-    private int maxFailedCount;
-    private int failCount;
-    private int blockSize;
+    //控件成员
+    private PictureVertifyView vertifyView;         //拼图块
+    private TextSeekbar seekbar;                    //滑动条块
+    private View accessSuccess, accessFailed;       //验证成功/失败显示的视图
+    private TextView accessText, accessFailedText;  //验证成功/失败显示的文字
+    private ImageView refreshView;                  //刷新按钮
+    //控件属性
+    private int drawableId = -1;          //验证图片资源id
+    private int progressDrawableId;  //滑动条背景id
+    private int thumbDrawableId;     //滑动条滑块id
+    private int mMode;               //控件验证模式(有滑动条/无滑动条)
+    private int maxFailedCount;      //最大失败次数
+    private int failCount;           //已失败次数
+    private int blockSize;           //拼图缺块大小
 
     //处理滑动条逻辑
     private boolean isResponse;
@@ -120,7 +122,9 @@ public class Captcha extends LinearLayout {
         accessFailedText = (TextView) parentView.findViewById(R.id.accessFailedText);
         refreshView = (ImageView) parentView.findViewById(R.id.refresh);
         setMode(mMode);
-        vertifyView.setImageResource(drawableId);
+        if(drawableId!=-1){
+            vertifyView.setImageResource(drawableId);
+        }
         setBlockSize(blockSize);
         vertifyView.callback(new PictureVertifyView.Callback() {
             @Override
@@ -165,6 +169,7 @@ public class Captcha extends LinearLayout {
 
         });
         setSeekBarStyle(progressDrawableId, thumbDrawableId);
+        //用于处理滑动条渐滑逻辑
         seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -206,6 +211,7 @@ public class Captcha extends LinearLayout {
     }
 
     private void startRefresh(View v) {
+        //点击刷新按钮，启动动画
         v.animate().rotationBy(360).setDuration(500)
                 .setInterpolator(new AccelerateDecelerateInterpolator())
                 .setListener(new Animator.AnimatorListener() {
@@ -295,15 +301,22 @@ public class Captcha extends LinearLayout {
     }
 
     public void setBitmap(String url) {
-        BitmapLoaderTask task = new BitmapLoaderTask(new BitmapLoaderTask.Callback() {
+        mTask = new BitmapLoaderTask(new BitmapLoaderTask.Callback() {
             @Override
             public void result(Bitmap bitmap) {
                 setBitmap(bitmap);
             }
         });
-        task.execute(url);
+        mTask.execute(url);
     }
 
+    @Override
+    protected void onDetachedFromWindow() {
+        if(mTask!=null&&mTask.getStatus().equals(AsyncTask.Status.RUNNING)){
+            mTask.cancel(true);
+        }
+        super.onDetachedFromWindow();
+    }
 
     /**
      * 复位
@@ -323,9 +336,13 @@ public class Captcha extends LinearLayout {
         }
     }
 
+<<<<<<< HEAD
     /**
      * 隐藏成功失败文字显示
      * */
+=======
+    //隐藏成功/失败文字
+>>>>>>> origin/master
     public void hideText() {
         accessFailed.setVisibility(GONE);
         accessSuccess.setVisibility(GONE);

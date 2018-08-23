@@ -6,6 +6,7 @@ import android.graphics.Paint;
 import android.graphics.Path;
 
 /**
+ * Captcha的拼图区域策咯
  * Created by luozhanming on 2018/1/19.
  */
 
