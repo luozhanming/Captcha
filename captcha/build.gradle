@@ -7,8 +7,8 @@ android {
     defaultConfig {
         minSdkVersion 15
         targetSdkVersion 25
-        versionCode 9
-        versionName "1.1.1"
+        versionCode 10
+        versionName "1.1.2"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
@@ -32,7 +32,7 @@ ext {
     artifact = 'captcha'//同上
 
     libraryDescription = 'An Android captcha widget.'//项目描述
-    libraryVersion = '1.1.1'//项目版本号,只需要在每次更新的时候填写
+    libraryVersion = '1.1.2'//项目版本号,只需要在每次更新的时候填写
 
     siteUrl = 'https://github.com/luozhanming/Captcha'
     gitUrl = 'https://github.com/luozhanming/Captcha.git'
