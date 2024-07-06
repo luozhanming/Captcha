@@ -40,6 +40,6 @@ class TextSeekbar extends android.support.v7.widget.AppCompatSeekBar {
         float top = fontMetrics.top;//为基线到字体上边框的距离,即上图中的top
         float bottom = fontMetrics.bottom;//为基线到字体下边框的距离,即上图中的bottom
         int baseLineY = (int) (getHeight() / 2 - top / 2 - bottom / 2);//基线中间点的y轴计算公式
-        canvas.drawText("向右滑动滑块完成拼图", getWidth() / 2, baseLineY, textPaint);
+        canvas.drawText("aaaaa", getWidth() / 2, baseLineY, textPaint);
     }
 }
